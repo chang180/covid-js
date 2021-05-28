@@ -3,11 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="covid19">
+    <meta name="description" content="covid-19">
     <meta name="keywords" content="HTML, CSS, JavaScript">
     <meta name="author" content="張建文">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>covid19</title>
+    <title>covid-19</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -27,10 +27,10 @@
     <h1 class="text-center">永和地區Covid-19趨勢圖(第17週起)</h1>
     <canvas id="myChart" height="80" width="400">123</canvas>
 </body>
-<!-- <footer>
-    <h3 class="text-center">Covid-19</h3>
-    <div class="text-center"><a href="">Covid-19</a></div>
-</footer> -->
+<footer>
+    <h3 class="text-center">資料來源</h3>
+    <div class="text-center"><a href="https://data.cdc.gov.tw/dataset/agstable-weekly-19cov">疫管署-地區年齡性別統計表-嚴重特殊傳染性肺炎(以週為單位)</a></div>
+</footer>
 <script>
     // $.getJSON("covid.json", e => {
     $.getJSON("./curlget.php", e => {
