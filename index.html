@@ -22,8 +22,10 @@
 </head>
 
 <body>
-    <h1 class="text-center">永和地區Covid-19趨勢圖</h1>
-    <canvas id="myChart" height="200" width="500">123</canvas>
+    <h1 class="text-center">臺灣Covid-19趨勢圖(第17週起)</h1>
+    <canvas id="Chart" height="80" width="400">123</canvas>
+    <h1 class="text-center">永和地區Covid-19趨勢圖(第17週起)</h1>
+    <canvas id="myChart" height="80" width="400">123</canvas>
 </body>
 <!-- <footer>
     <h3 class="text-center">Covid-19</h3>
@@ -35,8 +37,16 @@
         let data = e
             // console.log(data)
         var dataTotal = data.length; //資料長度
-        var obj = {}; //新物件
+        var obj = {} //新物件
+        var all = {} //全國性資料
         for (var i = 0; i < dataTotal; i++) {
+            if (all[data[i]['發病週別']]) {
+                all[data[i]['發病週別']].value = Number(all[data[i]['發病週別']].value) + Number(data[i]['確定病例數']);
+            } else {
+                all[data[i]['發病週別']] = {
+                    value: Number(data[i]['確定病例數'])
+                }
+            }
             if (data[i]['縣市'] == "新北市" && data[i]['鄉鎮'] == "永和區") {
                 // console.log("區域:" + data[i]['縣市'] + " 鄉鎮:" + data[i]['鄉鎮'] + " 發病週別:" + data[i]['發病週別'] + " 確定病例數:" + data[i]['確定病例數']);
                 // for (var i in data) {
@@ -50,6 +60,7 @@
                 // }
             }
         }
+        console.log(all)
 
         var label = []
         var number = []
@@ -58,6 +69,41 @@
             //     // number.push(element.value)
             //     console.log(element)
             // });
+        for (var i in all) {
+            label.push(i)
+            number.push(all[i].value)
+        }
+        label = label.slice(10)
+        number = number.slice(10)
+            // console.log(label)
+            // console.log(number)
+        var ctx = document.getElementById('Chart');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: label,
+                datasets: [{
+                    label: '臺灣疫情趨勢圖',
+                    data: number,
+                    backgroundColor: 'green',
+                    borderColor: 'darkblue',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: false
+                        }
+                    }]
+                }
+            }
+        });
+
+        label = []
+        number = []
+
         for (var i in obj) {
             label.push(i)
             number.push(obj[i].value)
