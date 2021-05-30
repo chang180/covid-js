@@ -46,10 +46,7 @@
     // let county = "永和區"
     let cities, counties, city, county
     $.getJSON("./taipei.json", e => {
-        // console.log(e)
         for (item in e) {
-            // console.log(e[item].name)
-            // cities.push(e[item].name)
             cities += `<option>${e[item].name}</option>`
         }
         counties = ''
@@ -61,14 +58,13 @@
         $("#county").html(counties)
         county = e[0].districts[0].name
         $('#countyText').html(city + county)
-        draw()
         $("#county").on('change', () => {
-                city = $('#city').val()
-                county = $('#county').val()
-                $('#countyText').html(city + county)
-                draw()
-            })
-
+            city = $('#city').val()
+            county = $('#county').val()
+            $('#countyText').html(city + county)
+            draw()
+        })
+        draw()
     })
 
     $("#city").on('change', () => (
@@ -84,13 +80,13 @@
             county = arr[0].name
             $("#county").html(counties)
             $('#countyText').html(city + county)
-            draw()
             $("#county").on('change', () => {
                 city = $('#city').val()
                 county = $('#county').val()
                 $('#countyText').html(city + county)
                 draw()
             })
+            draw()
         })
     ))
 
@@ -116,18 +112,18 @@
                         obj[data[i]['發病週別']].value = Number(obj[data[i]['發病週別']].value) + Number(data[i]['確定病例數']);
                     } else {
                         obj[data[i]['發病週別']] = {
-                            value: Number(data[i]['確定病例數'])??0.1
+                            value: Number(data[i]['確定病例數'])??0
                         }
                     }
                     // console.log(obj)
                 }
             }
             // console.log(all)
-            // 無確診週數補0.1進去(用0則chart.js無法顯示)
+            // 無確診週數補0進去
             let last = Object.keys(all)[Object.keys(all).length - 1]
-            for (let i = 1; i < last; i++) all[i] = all[i] ?? { value: 0.1 }
+            for (let i = 1; i < last; i++) all[i] = all[i] ?? { value: 0 }
             for (let i = 1; i < last; i++) {
-                obj[i] = obj[i] ?? { value: 0.1 }
+                obj[i] = obj[i] ?? { value: 0 }
             // console.log(i)
             }
             // console.log(all)
@@ -200,7 +196,7 @@
                     scales: {
                         yAxes: [{
                             ticks: {
-                                beginAtZero: false
+                                beginAtZero: true
                             }
                         }]
                     }
@@ -208,7 +204,6 @@
             });
         })
     }
-    draw()
 </script>
 
 </html>
