@@ -39,7 +39,7 @@
 <footer>
     <h3 class="text-center">資料來源</h3>
     <div class="text-center"><a
-            href="https://data.cdc.gov.tw/dataset/agstable-weekly-19cov">疫管署-地區年齡性別統計表-嚴重特殊傳染性肺炎(以週為單位)</a></div>
+            href="https://data.cdc.gov.tw/dataset/agstable-weekly-19cov" target="_blank">疫管署-地區年齡性別統計表-嚴重特殊傳染性肺炎(以週為單位)</a></div>
 </footer>
 <script>
     // let city = "新北市"
@@ -63,8 +63,10 @@
             county = $('#county').val()
             $('#countyText').html(city + county)
             draw()
+            // console.log('hi3')
         })
         draw()
+        // console.log('hi4')
     })
 
     $("#city").on('change', () => (
@@ -80,12 +82,15 @@
             county = arr[0].name
             $("#county").html(counties)
             $('#countyText').html(city + county)
-            $("#county").on('change', () => {
-                city = $('#city').val()
-                county = $('#county').val()
-                $('#countyText').html(city + county)
-                draw()
-            })
+
+            // 不須重複註冊事件
+            // $("#county").on('change', () => {
+            //     // city = $('#city').val()
+            //     // county = $('#county').val()
+            //     $('#countyText').html(city + county)
+            //     draw()
+            //     console.log('hi1')
+            // })
             draw()
         })
     ))
