@@ -10,128 +10,205 @@
     <title>covid-19</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.css" />
 
     <script src="jquery-3.5.1.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.js"></script>
 </head>
 
 <body>
-    <h1 class="text-center">臺灣Covid-19趨勢圖(第17週起)</h1>
-    <canvas id="Chart" height="80" width="400">123</canvas>
-    <h1 class="text-center">永和地區Covid-19趨勢圖(第17週起)</h1>
-    <canvas id="myChart" height="80" width="400">123</canvas>
+    <h1 class="text-center">臺灣Covid-19趨勢圖(第18週起)</h1>
+    <canvas id="Chart" height="80" width="400"></canvas>
+    <select id="city">
+    </select>
+    <select id="county">
+    </select>
+    <h1 class="text-center"><span id="countyText"></span>Covid-19趨勢圖(第18週起)</h1>
+    <canvas id="myChart" height="80" width="400"></canvas>
 </body>
 <footer>
     <h3 class="text-center">資料來源</h3>
-    <div class="text-center"><a href="https://data.cdc.gov.tw/dataset/agstable-weekly-19cov">疫管署-地區年齡性別統計表-嚴重特殊傳染性肺炎(以週為單位)</a></div>
+    <div class="text-center"><a
+            href="https://data.cdc.gov.tw/dataset/agstable-weekly-19cov">疫管署-地區年齡性別統計表-嚴重特殊傳染性肺炎(以週為單位)</a></div>
 </footer>
 <script>
-    // $.getJSON("covid.json", e => {
-    $.getJSON("./curlget.php", e => {
-        let data = e
+    // let city = "新北市"
+    // let county = "永和區"
+    let cities, counties, city, county
+    $.getJSON("./taipei.json", e => {
+        // console.log(e)
+        for (item in e) {
+            // console.log(e[item].name)
+            // cities.push(e[item].name)
+            cities += `<option>${e[item].name}</option>`
+        }
+        counties = ''
+        $("#city").html(cities)
+        city = e[0].name
+        for (item in e[0].districts) counties += `<option>${e[0].districts[item].name}</option>`
+        // console.log(e[0].districts)
+        // console.log(counties)
+        $("#county").html(counties)
+        county = e[0].districts[0].name
+        $('#countyText').html(city + county)
+        draw()
+        $("#county").on('change', () => {
+                city = $('#city').val()
+                county = $('#county').val()
+                $('#countyText').html(city + county)
+                draw()
+            })
+
+    })
+
+    $("#city").on('change', () => (
+        // console.log($("#city").val())
+        $.getJSON("./taipei.json", e => {
+            counties = ''
+            for (item in e) if (e[item].name == $("#city").val()) arr = e[item].districts
+            // counties += `<option>${e[item].districts[item].name}</option>`
+            // console.log(arr)
+            for (item in arr) counties += `<option>${arr[item].name}</option>`
+            // console.log(counties)
+            city = $('#city').val()
+            county = arr[0].name
+            $("#county").html(counties)
+            $('#countyText').html(city + county)
+            draw()
+            $("#county").on('change', () => {
+                city = $('#city').val()
+                county = $('#county').val()
+                $('#countyText').html(city + county)
+                draw()
+            })
+        })
+    ))
+
+    function draw() {
+        $.getJSON("./curlget.php", e => {
+            let data = e
             // console.log(data)
-        var dataTotal = data.length; //資料長度
-        var obj = {} //新物件
-        var all = {} //全國性資料
-        for (var i = 0; i < dataTotal; i++) {
-            if (all[data[i]['發病週別']]) {
-                all[data[i]['發病週別']].value = Number(all[data[i]['發病週別']].value) + Number(data[i]['確定病例數']);
-            } else {
-                all[data[i]['發病週別']] = {
-                    value: Number(data[i]['確定病例數'])
-                }
-            }
-            if (data[i]['縣市'] == "新北市" && data[i]['鄉鎮'] == "永和區") {
-                // console.log("區域:" + data[i]['縣市'] + " 鄉鎮:" + data[i]['鄉鎮'] + " 發病週別:" + data[i]['發病週別'] + " 確定病例數:" + data[i]['確定病例數']);
-                // for (var i in data) {
-                if (obj[data[i]['發病週別']]) {
-                    obj[data[i]['發病週別']].value = Number(obj[data[i]['發病週別']].value) + Number(data[i]['確定病例數']);
+            var dataTotal = data.length; //資料長度
+            var obj = {} //新物件
+            var all = {} //全國性資料
+            for (var i = 0; i < dataTotal; i++) {
+                if (all[data[i]['發病週別']]) {
+                    all[data[i]['發病週別']].value = Number(all[data[i]['發病週別']].value) + Number(data[i]['確定病例數']);
                 } else {
-                    obj[data[i]['發病週別']] = {
+                    all[data[i]['發病週別']] = {
                         value: Number(data[i]['確定病例數'])
                     }
                 }
-                // }
+                if (data[i]['縣市'] == city && data[i]['鄉鎮'] == county) {
+                    // console.log("區域:" + data[i]['縣市'] + " 鄉鎮:" + data[i]['鄉鎮'] + " 發病週別:" + data[i]['發病週別'] + " 確定病例數:" + data[i]['確定病例數']);
+                    // for (var i in data) {
+                    if (obj[data[i]['發病週別']]) {
+                        obj[data[i]['發病週別']].value = Number(obj[data[i]['發病週別']].value) + Number(data[i]['確定病例數']);
+                    } else {
+                        obj[data[i]['發病週別']] = {
+                            value: Number(data[i]['確定病例數'])??0.1
+                        }
+                    }
+                    // console.log(obj)
+                }
             }
-        }
-        console.log(all)
+            // console.log(all)
+            // 無確診週數補0.1進去(用0則chart.js無法顯示)
+            let last = Object.keys(all)[Object.keys(all).length - 1]
+            for (let i = 1; i < last; i++) all[i] = all[i] ?? { value: 0.1 }
+            for (let i = 1; i < last; i++) {
+                obj[i] = obj[i] ?? { value: 0.1 }
+            // console.log(i)
+            }
+            // console.log(all)
+            // console.log(obj)
 
-        var label = []
-        var number = []
+
+            var label = []
+            var number = []
             // obj.forEach(element => {
             //     // label.push(key)
             //     // number.push(element.value)
             //     console.log(element)
             // });
-        for (var i in all) {
-            label.push(i)
-            number.push(all[i].value)
-        }
-        label = label.slice(10)
-        number = number.slice(10)
+            for (var i in all) {
+                label.push(i)
+                number.push(all[i].value)
+            }
+            label = label.slice(17)
+            number = number.slice(17)
             // console.log(label)
             // console.log(number)
-        var ctx = document.getElementById('Chart');
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: label,
-                datasets: [{
-                    label: '臺灣疫情趨勢圖',
-                    data: number,
-                    backgroundColor: 'green',
-                    borderColor: 'darkblue',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: false
-                        }
+            var ctx = document.getElementById('Chart');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: '臺灣疫情趨勢圖',
+                        data: number,
+                        backgroundColor: 'green',
+                        borderColor: 'darkblue',
+                        borderWidth: 1
                     }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: false
+                            }
+                        }]
+                    }
                 }
+            });
+
+            label = []
+            number = []
+            // console.log(obj)
+            for (var i in obj) {
+                label.push(i)
+                number.push(obj[i].value)
             }
-        });
-
-        label = []
-        number = []
-
-        for (var i in obj) {
-            label.push(i)
-            number.push(obj[i].value)
-        }
-        var ctx = document.getElementById('myChart');
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: label,
-                datasets: [{
-                    label: '永和地區疫情趨勢圖',
-                    data: number,
-                    backgroundColor: 'darkblue',
-                    borderColor: 'green',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: false
-                        }
+            // console.log(number)
+            label = label.slice(17)
+            number = number.slice(17)
+            var ctx = document.getElementById('myChart');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: county + '疫情趨勢圖',
+                        data: number,
+                        backgroundColor: 'darkblue',
+                        borderColor: 'green',
+                        borderWidth: 1
                     }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: false
+                            }
+                        }]
+                    }
                 }
-            }
-        });
-    })
+            });
+        })
+    }
+    draw()
 </script>
 
 </html>
