@@ -28,13 +28,13 @@
 
 <body>
     <h1 class="text-center">臺灣COVID-19趨勢圖(第18週起)</h1>
-    <canvas id="Chart" height="80" width="400"></canvas>
+    <div id="taiwan"><canvas id="Chart" height="80" width="400"></canvas></div>
     <select id="city">
     </select>
     <select id="county">
     </select>
     <h1 class="text-center"><span id="countyText"></span>COVID-19趨勢圖(第18週起)</h1>
-    <canvas id="myChart" height="80" width="400"></canvas>
+    <div id="dist"><canvas id="myChart" height="80" width="400"></canvas></div>
 </body>
 <footer>
     <h3 class="text-center">資料來源</h3>
@@ -44,8 +44,9 @@
 <script>
     // let city = "新北市"
     // let county = "永和區"
-    let cities, counties, city, county
-    $.getJSON("./taipei.json", e => {
+    let cities, counties, city, county ,myChart ,myChart2
+    // $.getJSON("./taipei.json", e => {
+    $.getJSON("./taiwan_districts.json", e => {
         for (item in e) {
             cities += `<option>${e[item].name}</option>`
         }
@@ -65,13 +66,15 @@
             draw()
             // console.log('hi3')
         })
+        // $('#dist #myChart').html('<canvas id="myChart" height="80" width="400">')
         draw()
         // console.log('hi4')
     })
 
     $("#city").on('change', () => (
         // console.log($("#city").val())
-        $.getJSON("./taipei.json", e => {
+        // $.getJSON("./taipei.json", e => {
+        $.getJSON("./taiwan_districts.json", e => {
             counties = ''
             for (item in e)
                 if (e[item].name == $("#city").val()) arr = e[item].districts
@@ -97,6 +100,10 @@
     ))
 
     function draw() {
+        // console.log(myChart2)
+        if(myChart != null) myChart.destroy()
+        if(myChart2 != null) myChart2.destroy()
+        // console.log(myChart2)
         $.getJSON("./curlget.php", e => {
             let data = e
             // console.log(data)
@@ -156,7 +163,7 @@
             // console.log(label)
             // console.log(number)
             var ctx = document.getElementById('Chart');
-            var myChart = new Chart(ctx, {
+            myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: label,
@@ -178,25 +185,25 @@
                     }
                 }
             });
-
-            label = []
-            number = []
+            var label2 = []
+            var number2 = []
             // console.log(obj)
             for (var i in obj) {
-                label.push(i)
-                number.push(obj[i].value)
+                label2.push(i)
+                number2.push(obj[i].value)
             }
             // console.log(number)
-            label = label.slice(17)
-            number = number.slice(17)
-            var ctx = document.getElementById('myChart');
-            var myChart = new Chart(ctx, {
+            label2 = label2.slice(17)
+            number2 = number2.slice(17)
+            var ctx2 = document.getElementById('myChart');
+            // console.log(myChart2)
+            myChart2 = new Chart(ctx2, {
                 type: 'line',
                 data: {
-                    labels: label,
+                    labels: label2,
                     datasets: [{
                         label: county + '疫情趨勢圖',
-                        data: number,
+                        data: number2,
                         backgroundColor: 'darkblue',
                         borderColor: 'green',
                         borderWidth: 1
@@ -212,6 +219,8 @@
                     }
                 }
             });
+            console.log(myChart)
+            console.log(myChart2)
         })
     }
 </script>
