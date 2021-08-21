@@ -28,6 +28,7 @@
 
 <body>
     <h1 class="text-center">臺灣COVID-19趨勢圖(第18週起)</h1>
+    <div class="float-right" id="nowdate"></div>
     <div id="taiwan"><canvas id="Chart" height="80" width="400"></canvas></div>
     <select id="city">
     </select>
@@ -44,7 +45,13 @@
 <script>
     // let city = "新北市"
     // let county = "永和區"
-    let cities, counties, city, county ,myChart ,myChart2
+    let cities, counties, city, county, myChart, myChart2
+    const nowdate = new Date();
+    const formatDate = (nowdate) => {
+        let formatted_date = nowdate.getFullYear() + "年" + (nowdate.getMonth() + 1) + "月" + nowdate.getDate() + "日"
+        return formatted_date;
+    }
+    $('#nowdate').html('資料更新時間：'+formatDate(nowdate))
     // $.getJSON("./taipei.json", e => {
     $.getJSON("./taiwan_districts.json", e => {
         for (item in e) {
@@ -101,8 +108,8 @@
 
     function draw() {
         // console.log(myChart2)
-        if(myChart != null) myChart.destroy()
-        if(myChart2 != null) myChart2.destroy()
+        if (myChart != null) myChart.destroy()
+        if (myChart2 != null) myChart2.destroy()
         // console.log(myChart2)
         $.getJSON("./curlget.php", e => {
             let data = e
@@ -137,11 +144,12 @@
             for (let i = 1; i <= last; i++) all[i] = all[i] ?? {
                 value: 0
             }
-            for (let i = 1; i <= last; i++){ 
+            for (let i = 1; i <= last; i++) {
                 // console.log(i)
                 obj[i] = obj[i] ?? {
-                value: 0
-            }}
+                    value: 0
+                }
+            }
             // console.log(i)
             // console.log(all)
             // console.log(obj)
