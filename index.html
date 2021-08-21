@@ -3,11 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="covid-19">
+    <meta name="description" content="COVID-19 trend Taiwan">
     <meta name="keywords" content="HTML, CSS, JavaScript">
     <meta name="author" content="張建文">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>covid-19</title>
+    <title>COVID-19</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
@@ -27,25 +27,26 @@
 </head>
 
 <body>
-    <h1 class="text-center">臺灣Covid-19趨勢圖(第18週起)</h1>
-    <canvas id="Chart" height="80" width="400"></canvas>
+    <h1 class="text-center">臺灣COVID-19趨勢圖(第18週起)</h1>
+    <div id="taiwan"><canvas id="Chart" height="80" width="400"></canvas></div>
     <select id="city">
     </select>
     <select id="county">
     </select>
-    <h1 class="text-center"><span id="countyText"></span>Covid-19趨勢圖(第18週起)</h1>
-    <canvas id="myChart" height="80" width="400"></canvas>
+    <h1 class="text-center"><span id="countyText"></span>COVID-19趨勢圖(第18週起)</h1>
+    <div id="dist"><canvas id="myChart" height="80" width="400"></canvas></div>
 </body>
 <footer>
     <h3 class="text-center">資料來源</h3>
-    <div class="text-center"><a
-            href="https://data.cdc.gov.tw/dataset/agstable-weekly-19cov" target="_blank">疫管署-地區年齡性別統計表-嚴重特殊傳染性肺炎(以週為單位)</a></div>
+    <div class="text-center"><a href="https://data.cdc.gov.tw/dataset/agstable-weekly-19cov"
+            target="_blank">疫管署-地區年齡性別統計表-嚴重特殊傳染性肺炎(以週為單位)</a></div>
 </footer>
 <script>
     // let city = "新北市"
     // let county = "永和區"
-    let cities, counties, city, county
-    $.getJSON("./taipei.json", e => {
+    let cities, counties, city, county ,myChart ,myChart2
+    // $.getJSON("./taipei.json", e => {
+    $.getJSON("./taiwan_districts.json", e => {
         for (item in e) {
             cities += `<option>${e[item].name}</option>`
         }
@@ -65,15 +66,18 @@
             draw()
             // console.log('hi3')
         })
+        // $('#dist #myChart').html('<canvas id="myChart" height="80" width="400">')
         draw()
         // console.log('hi4')
     })
 
     $("#city").on('change', () => (
         // console.log($("#city").val())
-        $.getJSON("./taipei.json", e => {
+        // $.getJSON("./taipei.json", e => {
+        $.getJSON("./taiwan_districts.json", e => {
             counties = ''
-            for (item in e) if (e[item].name == $("#city").val()) arr = e[item].districts
+            for (item in e)
+                if (e[item].name == $("#city").val()) arr = e[item].districts
             // counties += `<option>${e[item].districts[item].name}</option>`
             // console.log(arr)
             for (item in arr) counties += `<option>${arr[item].name}</option>`
@@ -96,6 +100,10 @@
     ))
 
     function draw() {
+        // console.log(myChart2)
+        if(myChart != null) myChart.destroy()
+        if(myChart2 != null) myChart2.destroy()
+        // console.log(myChart2)
         $.getJSON("./curlget.php", e => {
             let data = e
             // console.log(data)
@@ -117,7 +125,7 @@
                         obj[data[i]['發病週別']].value = Number(obj[data[i]['發病週別']].value) + Number(data[i]['確定病例數']);
                     } else {
                         obj[data[i]['發病週別']] = {
-                            value: Number(data[i]['確定病例數'])??0
+                            value: Number(data[i]['確定病例數']) ?? 0
                         }
                     }
                     // console.log(obj)
@@ -126,11 +134,15 @@
             // console.log(all)
             // 無確診週數補0進去
             let last = Object.keys(all)[Object.keys(all).length - 1]
-            for (let i = 1; i < last; i++) all[i] = all[i] ?? { value: 0 }
-            for (let i = 1; i < last; i++) {
-                obj[i] = obj[i] ?? { value: 0 }
-            // console.log(i)
+            for (let i = 1; i <= last; i++) all[i] = all[i] ?? {
+                value: 0
             }
+            for (let i = 1; i <= last; i++){ 
+                // console.log(i)
+                obj[i] = obj[i] ?? {
+                value: 0
+            }}
+            // console.log(i)
             // console.log(all)
             // console.log(obj)
 
@@ -151,7 +163,7 @@
             // console.log(label)
             // console.log(number)
             var ctx = document.getElementById('Chart');
-            var myChart = new Chart(ctx, {
+            myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: label,
@@ -173,25 +185,25 @@
                     }
                 }
             });
-
-            label = []
-            number = []
+            var label2 = []
+            var number2 = []
             // console.log(obj)
             for (var i in obj) {
-                label.push(i)
-                number.push(obj[i].value)
+                label2.push(i)
+                number2.push(obj[i].value)
             }
             // console.log(number)
-            label = label.slice(17)
-            number = number.slice(17)
-            var ctx = document.getElementById('myChart');
-            var myChart = new Chart(ctx, {
+            label2 = label2.slice(17)
+            number2 = number2.slice(17)
+            var ctx2 = document.getElementById('myChart');
+            // console.log(myChart2)
+            myChart2 = new Chart(ctx2, {
                 type: 'line',
                 data: {
-                    labels: label,
+                    labels: label2,
                     datasets: [{
                         label: county + '疫情趨勢圖',
-                        data: number,
+                        data: number2,
                         backgroundColor: 'darkblue',
                         borderColor: 'green',
                         borderWidth: 1
@@ -207,6 +219,8 @@
                     }
                 }
             });
+            console.log(myChart)
+            console.log(myChart2)
         })
     }
 </script>
