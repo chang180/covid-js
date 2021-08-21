@@ -34,34 +34,34 @@ foreach (json_decode($output) as $key => $val) {
 //     'week'=>0,
 //     'number'=>0
 // ]);
-$new_array=[];
 
-foreach ($remove_empty as $k => $v) {
-    // var_dump($v);
-    // $vFlag = $v['縣市'].$v['鄉鎮'].$v['發病年份'].$v['發病週別'];
-    $vFlag = $v->{'縣市'} . $v->{'鄉鎮'} . $v->{'發病年份'} . $v->{'發病週別'};
+//要存檔時使用，欄位可換為英文，較容易操作
+// $new_array=[];
 
-    if (isset($new_array[$vFlag])) {
-        // $new_array[$vFlag]['number'] += $v['確定病例數'];
-        $new_array['number'] += $v['確定病例數'];
-        // $new_array['city'] = $v->{'縣市'};
-        // $new_array['county'] = $v->{'鄉鎮'};
-        // $new_array['year'] = $v->{'發病年份'};
-        // $new_array['week'] = $v->{'發病週別'};
-        // $new_array['number'] = $v->{'確定病例數'};
-    } else {
-        // $new_array->{'city'} = $v->{'縣市'};
-        // $new_array->{'county'} = $v->{'鄉鎮'};
-        // $new_array->{'year'} = $v->{'發病年份'};
-        // $new_array->{'week'} = $v->{'發病週別'};
-        // $new_array->{'number'} = $v->{'確定病例數'};
-        $new_array['city'] = $v->{'縣市'};
-        $new_array['county'] = $v->{'鄉鎮'};
-        $new_array['year'] = $v->{'發病年份'};
-        $new_array['week'] = $v->{'發病週別'};
-        $new_array['number'] = $v->{'確定病例數'};
-    }
-}
+// foreach ($remove_empty as $k => $v) {
+//     $vFlag = $v->{'縣市'} . $v->{'鄉鎮'} . $v->{'發病年份'} . $v->{'發病週別'};
+
+//     if (isset($new_array[$vFlag])) {
+//         // $new_array[$vFlag]['number'] += $v['確定病例數'];
+//         $new_array['number'] += $v['確定病例數'];
+//         // $new_array['city'] = $v->{'縣市'};
+//         // $new_array['county'] = $v->{'鄉鎮'};
+//         // $new_array['year'] = $v->{'發病年份'};
+//         // $new_array['week'] = $v->{'發病週別'};
+//         // $new_array['number'] = $v->{'確定病例數'};
+//     } else {
+//         // $new_array->{'city'} = $v->{'縣市'};
+//         // $new_array->{'county'} = $v->{'鄉鎮'};
+//         // $new_array->{'year'} = $v->{'發病年份'};
+//         // $new_array->{'week'} = $v->{'發病週別'};
+//         // $new_array->{'number'} = $v->{'確定病例數'};
+//         $new_array['city'] = $v->{'縣市'};
+//         $new_array['county'] = $v->{'鄉鎮'};
+//         $new_array['year'] = $v->{'發病年份'};
+//         $new_array['week'] = $v->{'發病週別'};
+//         $new_array['number'] = $v->{'確定病例數'};
+//     }
+// }
 // var_dump($new_array);
 // print_r(array_values($new_array));
 
