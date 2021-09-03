@@ -176,7 +176,7 @@
                 data: {
                     labels: label,
                     datasets: [{
-                        label: '臺灣疫情趨勢圖',
+                        label: '當週發病人數',
                         data: number,
                         backgroundColor: 'green',
                         borderColor: 'darkblue',
@@ -210,7 +210,7 @@
                 data: {
                     labels: label2,
                     datasets: [{
-                        label: county + '疫情趨勢圖',
+                        label: county + '當週發病人數',
                         data: number2,
                         backgroundColor: 'darkblue',
                         borderColor: 'green',
@@ -227,8 +227,8 @@
                     }
                 }
             });
-            console.log(myChart)
-            console.log(myChart2)
+            // console.log(myChart)
+            // console.log(myChart2)
         })
     }
 </script>
